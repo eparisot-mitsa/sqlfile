@@ -4,6 +4,7 @@
 package sqlfile
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"io/ioutil"
