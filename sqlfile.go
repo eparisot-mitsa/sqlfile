@@ -71,7 +71,8 @@ func (s *SqlFile) Directory(dir string) error {
 
 // Exec execute SQL statements written int the specified sql file
 func (s *SqlFile) Exec(db *sql.DB) (res []sql.Result, err error) {
-	tx, err := db.Begin()
+	ctx := context.TODO()
+	tx, err := db.BeginTx(ctx, nil)
 	if err != nil {
 		return res, err
 	}
@@ -79,7 +80,7 @@ func (s *SqlFile) Exec(db *sql.DB) (res []sql.Result, err error) {
 
 	var rs []sql.Result
 	for _, q := range s.queries {
-		r, err := tx.Exec(q)
+		r, err := tx.ExecContext(ctx, q)
 		if err != nil {
 			return res, fmt.Errorf(err.Error() + " : when executing > " + q)
 		}
