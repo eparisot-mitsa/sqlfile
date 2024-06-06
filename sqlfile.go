@@ -75,17 +75,18 @@ func (s *SqlFile) Exec(db *sql.DB) (res []sql.Result, err error) {
 	if err != nil {
 		return res, err
 	}
-	defer saveTx(tx, &err)
 
 	var rs []sql.Result
 	for _, q := range s.queries {
-		r, err := tx.Exec(q)
+		var r sql.Result
+		r, err = tx.Exec(q)
 		if err != nil {
+			saveTx(tx, &err)
 			return res, fmt.Errorf(err.Error() + " : when executing > " + q)
 		}
 		rs = append(rs, r)
 	}
-
+	saveTx(tx, &err)
 	return rs, err
 }
 
